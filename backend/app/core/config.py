@@ -27,8 +27,16 @@ class Settings(BaseSettings):
     # For local dev: CORS_ORIGINS=http://localhost:8081,http://127.0.0.1:8081
     cors_origins: list[str] = ["http://localhost:8081", "http://127.0.0.1:8081"]
 
+
     @field_validator("cors_origins", mode="before")
     @classmethod
+    def _use_psycopg3(cls, v: object) -> object:
+        if isinstance(v, str):
+            if v.startswith("postgresql://"):
+                return v.replace("postgresql://", "postgresql+psycopg://", 1)
+            if v.startswith("postgres://"):
+                return v.replace("postgres://", "postgresql+psycopg://", 1)
+        return v
     def _split_cors_origins(cls, v: object) -> object:
         """Allow CORS_ORIGINS to be supplied as a comma-separated string in .env
         (pydantic-settings parses JSON lists automatically, but a plain
