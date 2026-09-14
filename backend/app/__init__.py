@@ -1,0 +1,1 @@
+"""LegalMetry backend package."""

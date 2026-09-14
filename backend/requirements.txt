@@ -1,0 +1,17 @@
+fastapi==0.135.1
+uvicorn[standard]==0.41.0
+sqlalchemy==2.0.48
+psycopg[binary]==3.3.3
+pydantic-settings==2.13.1
+PyJWT==2.12.1
+pwdlib[argon2]==0.3.0
+python-multipart==0.0.22
+minio==7.2.20
+celery[redis]==5.6.2
+email-validator==2.3.0
+opencv-python-headless==4.11.0.86
+numpy==2.2.6
+paddlepaddle==3.3.1
+paddleocr==3.7.0
+fpdf2==2.8.2
+requests==2.32.3

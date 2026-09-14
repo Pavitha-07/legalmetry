@@ -1,0 +1,62 @@
+# ── Secrets — never commit real credentials ──────────────────────────────
+# backend/.env holds the Groq API key, Gemini API key, JWT secret, DB
+# credentials, and the initial supervisor password. backend/.env.example
+# (a different filename, so unaffected by the patterns below) is the safe
+# template and IS meant to be committed.
+.env
+*.env
+
+# ── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+venv/
+.venv/
+
+# ── Node / Expo / web ────────────────────────────────────────────────────
+node_modules/
+.expo/
+.expo-shared/
+dist/
+web-build/
+*.tsbuildinfo
+npm-debug.log*
+
+# ── OS / editor cruft ────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ── Logs / scratch ───────────────────────────────────────────────────────
+*.log
+tmp/
+
+# ── coin-detector: keep the training scripts + dataset, drop everything
+#    the training run regenerates (checkpoints, run logs, the downloaded
+#    pretrained base model) ───────────────────────────────────────────────
+coin-detector/runs/
+coin-detector/*.pt
+
+# ── Reference-only asset: the Next.js landing-page design this project's
+#    real Landing.tsx was ported from. It carries its own nested .git,
+#    node_modules, and .next build cache — not part of the deployed app,
+#    and a nested .git would otherwise show up as an embedded repo. ───────
+landing page design/
+
+# ── Internal planning docs — not meant for the pushed repo ────────────────
+implementationplan.md
+TECHNICAL_APPROACH.md
+
+# ── NOT ignored, deliberately: backend/app/ml_models/coin_detector.onnx
+#    is a required runtime asset the API actually loads, not a build
+#    byproduct — it must stay tracked.
+
+# Groq test artifacts
+groq_*.json
+groq_test.py
+
+# Local agent configuration
+.agents/
+.claude/

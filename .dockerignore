@@ -1,0 +1,13 @@
+.git
+.gitignore
+**/__pycache__
+**/*.pyc
+**/venv
+font-size-detector
+tmp
+*.pdf
+*.jpeg
+*.jpg
+*.png
+design.md
+implementationplan.md
