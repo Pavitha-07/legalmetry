@@ -312,11 +312,19 @@ def process_panel_pair(inspection_id: str, job_id: str) -> None:
         db.commit()
     except Exception as exc:
         db.rollback()
+        # Mark the job FAILED so the supervisor can see what went wrong.
         job = db.get(ProcessingJob, job_id)
         if job:
             job.status = JobStatus.FAILED
             job.detail = str(exc)
-            db.commit()
+        # Reset a PROCESSING inspection to NEEDS_REVIEW so it doesn't stay
+        # stuck spinning forever with no way to retry. The worker set it to
+        # PROCESSING at the top of this task; a crash before the commit at
+        # line ~312 leaves it there permanently without this guard.
+        stuck = db.get(Inspection, inspection_id)
+        if stuck is not None and stuck.status == InspectionStatus.PROCESSING:
+            stuck.status = InspectionStatus.NEEDS_REVIEW
+        db.commit()
         raise
     finally:
         db.close()

@@ -24,9 +24,11 @@
       "expo-font"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "in.gov.legalmetry"
     },
     "android": {
+      "package": "in.gov.legalmetry",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",

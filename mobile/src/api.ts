@@ -253,11 +253,20 @@ export type Dashboard = {
 };
 
 /**
- * A phone running Expo Go cannot reach the dev machine through localhost, so
- * the LAN address is the native default and is editable on the sign-in screen.
+ * API base URL for the LegalMetry backend.
+ *
+ * Set EXPO_PUBLIC_API_URL in your .env (or EAS build profile) to the
+ * deployed backend URL before building for production, e.g.:
+ *   EXPO_PUBLIC_API_URL=https://api.legalmetry.example.gov.in
+ *
+ * - Web default falls back to localhost (dev server on the same machine).
+ * - Native default falls back to localhost:8000 as a safe placeholder that
+ *   makes the "cannot connect" error obvious rather than silently hitting an
+ *   old LAN IP that no longer exists.
  */
-export const defaultBaseUrl =
-  Platform.OS === 'web' ? 'http://localhost:8000' : 'http://192.168.1.4:8000';
+export const defaultBaseUrl: string =
+  process.env.EXPO_PUBLIC_API_URL ??
+  (Platform.OS === 'web' ? 'http://localhost:8000' : 'http://localhost:8000');
 
 export class ApiError extends Error {
   status: number;

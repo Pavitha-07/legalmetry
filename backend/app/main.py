@@ -2,6 +2,7 @@ import hashlib
 import json
 import re
 import uuid
+from contextlib import asynccontextmanager
 from datetime import date, datetime, timedelta, UTC
 
 from fastapi import Depends, FastAPI, File, HTTPException, Query, UploadFile, status
@@ -69,15 +70,40 @@ from app.services.report import generate_inspection_proforma, generate_seizure_m
 from app.services.storage import ensure_bucket, presigned_download_url, put_bytes
 from app.worker import process_panel_pair
 
-app = FastAPI(title="LegalMetry API", version="0.1.0")
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    """Replaces the deprecated @app.on_event('startup') pattern.
+    Runs once when uvicorn starts: creates DB tables, ensures MinIO bucket
+    exists, and seeds the initial supervisor account if configured.
+    """
+    Base.metadata.create_all(bind=engine)
+    ensure_bucket()
+    settings = get_settings()
+    if settings.initial_supervisor_email and settings.initial_supervisor_password:
+        with Session(engine) as db:
+            existing = db.scalar(select(User).where(User.email == settings.initial_supervisor_email.lower()))
+            if existing is None:
+                db.add(
+                    User(
+                        email=settings.initial_supervisor_email.lower(),
+                        full_name="Initial Supervisor",
+                        password_hash=hash_password(settings.initial_supervisor_password),
+                        role=UserRole.SUPERVISOR,
+                    )
+                )
+                db.commit()
+    yield  # application runs here
+    # No shutdown logic needed.
+
+
+app = FastAPI(title="LegalMetry API", version="0.1.0", lifespan=lifespan)
+_settings = get_settings()
 app.add_middleware(
     CORSMiddleware,
-    # Development-only local origins for Expo web/Metro. Native Expo clients
-    # do not use browser CORS, and production must replace this with the
-    # deployed app origins.
-    allow_origins=["http://localhost:8081", "http://127.0.0.1:8081", "http://192.168.1.12:8081",
-                   "http://localhost:8083", "http://127.0.0.1:8083", "http://192.168.1.12:8083",
-                   "http://192.168.1.4:8081", "http://192.168.1.4:8083"],
+    # Origins are read from the CORS_ORIGINS env var (comma-separated).
+    # Set it to your deployed app URL(s) in production.
+    # For local dev: CORS_ORIGINS=http://localhost:8081,http://127.0.0.1:8081
+    allow_origins=_settings.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -112,26 +138,6 @@ def violation_case_query():
         selectinload(ViolationCase.evidence),
         selectinload(ViolationCase.inspection),
     )
-
-
-@app.on_event("startup")
-def startup() -> None:
-    Base.metadata.create_all(bind=engine)
-    ensure_bucket()
-    settings = get_settings()
-    if settings.initial_supervisor_email and settings.initial_supervisor_password:
-        with Session(engine) as db:
-            existing = db.scalar(select(User).where(User.email == settings.initial_supervisor_email.lower()))
-            if existing is None:
-                db.add(
-                    User(
-                        email=settings.initial_supervisor_email.lower(),
-                        full_name="Initial Supervisor",
-                        password_hash=hash_password(settings.initial_supervisor_password),
-                        role=UserRole.SUPERVISOR,
-                    )
-                )
-                db.commit()
 
 
 @app.get("/health")
