@@ -1,4 +1,6 @@
 import { useEffect } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Icon, type IconName } from '../ui/Icon';
 import { FoldText } from '../ui/web/FoldText';
 import { HandWrittenTitle } from '../ui/web/HandWrittenTitle';
@@ -91,6 +93,17 @@ export function Landing({
     body.style.overflow = 'auto';
     body.style.background = BG;
     html.style.background = BG;
+
+    // Google Fonts load asynchronously. FoldText's ScrollTrigger instances
+    // measure element positions at mount time — before the font swap — so
+    // their trigger thresholds are stale after the swap changes line heights.
+    // Refreshing ScrollTrigger after fonts are ready fixes headings that
+    // stay invisible because their trigger point was never reached.
+    if (typeof document !== 'undefined' && document.fonts) {
+      document.fonts.ready.then(() => {
+        ScrollTrigger.refresh();
+      });
+    }
 
     return () => {
       body.style.overflow = prev.bodyOverflow;

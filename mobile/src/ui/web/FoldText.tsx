@@ -174,7 +174,11 @@ export function FoldText({
       gsap.set(pieces, fromVars);
       scrollTrigger = ScrollTrigger.create({
         trigger: root,
-        start: 'top 88%',
+        // 105% means the animation fires just before the element's top edge
+        // reaches the bottom of the viewport. This is more forgiving than
+        // 88%, which can miss elements whose trigger point was calculated
+        // before a Google Fonts swap changed element heights.
+        start: 'top 105%',
         end: 'bottom top',
         onEnter: () => play(false),
         onLeave: () => reset(),
