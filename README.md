@@ -2,7 +2,17 @@
 
 A computer-vision and rule-engine platform for Legal Metrology enforcement officers. It reads a packaged commodity's mandatory declarations, measures font height against a physical ₹10-coin reference, checks every field against the exact Legal Metrology (Packaged Commodities) Rules, 2011 provision that applies, and generates an evidence-backed report — with the officer confirming every uncertain finding before it becomes a violation.
 
-See `TECHNICAL_APPROACH.md` for the full technical write-up (architecture, tech stack, design decisions).
+<p align="center">
+  <a href="#login-credentials">
+    <img src="https://img.shields.io/badge/_Login_Credentials-View-blue?style=for-the-badge" alt="Login Credentials">
+  </a>
+  <a href="https://expo.dev/artifacts/eas/2i2KWBvAgOTs2chfOCKI0KpOQABM3fQeMuSINLQzY2o.apk">
+    <img src="https://img.shields.io/badge/_Download_APK-Download-green?style=for-the-badge" alt="Download APK">
+  </a>
+  <a href="https://legalmetry.vercel.app/">
+    <img src="https://img.shields.io/badge/_Website-Visit-orange?style=for-the-badge" alt="Visit Website">
+  </a>
+</p>
 
 ---
 
