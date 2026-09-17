@@ -99,3 +99,16 @@ docker-compose.yml   Full local stack definition
 - **API container keeps restarting** — check `docker compose logs api`; almost always a missing/invalid value in `backend/.env`.
 - **Phone can't reach the API** — double-check the Connection address is your LAN IP (not `localhost`), and that both devices are on the same network. Some public/guest Wi-Fi networks block device-to-device traffic entirely.
 - **PaddleOCR is slow on first run** — its models download on first use and are cached in a Docker volume afterward; the first scan after a fresh `docker compose up` will be noticeably slower than subsequent ones.
+
+
+## Login Credentials
+
+| Role       | E-mail                     | Password                         |
+|------------|----------------------------|----------------------------------|
+| Supervisor | supervisor@example.gov.in  | ChangeThisSupervisorPassword123! |
+| Inspector  | khan@gmail.com             | 123456789012                     |
+
+**Note:**
+
+- **Supervisor**: Use the provided credentials to log in. **Creating a new supervisor account is not supported.**
+- **Inspector**: Inspectors can either log in using the provided credentials or create a new account through the **Sign Up** option.
